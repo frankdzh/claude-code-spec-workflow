@@ -17,6 +17,10 @@
 ## Task Format Guidelines
 - Use checkbox format: `- [ ] Task number. Task description`
 - **Specify files**: Always include exact file paths to create/modify
+- **Define TDD Granularity**: For a group of tasks, specify the testing strategy. This applies to all subsequent tasks until a new granularity is defined.
+  - `[GRANULARITY:STRICT]` (or `[GRANULARITY:严格]`): For high-risk, complex core logic. Follows a strict Red-Green-Refactor cycle.
+  - `[GRANULARITY:STANDARD]` (or `[GRANULARITY:标准]`): For standard features. Write tests, then implement to make them pass. (Default)
+  - `[GRANULARITY:RELAXED]` (or `[GRANULARITY:宽松]`): For low-risk tasks like UI tweaks. Implement and then write tests.
 - **Include implementation details** as bullet points
 - Reference requirements using: `_Requirements: X.Y, Z.A_`
 - Reference existing code to leverage using: `_Leverage: path/to/file.ts, path/to/component.tsx_`
@@ -35,6 +39,8 @@
 - "Create LoginForm component in components/LoginForm.tsx with email/password inputs"
 
 ## Tasks
+
+### Feature: Core Data Layer [GRANULARITY:STRICT]
 
 - [ ] 1. Create core interfaces in src/types/feature.ts
   - File: src/types/feature.ts
@@ -68,6 +74,8 @@
   - _Leverage: tests/helpers/testUtils.ts, tests/fixtures/data.ts_
   - _Requirements: 2.1, 2.2_
 
+### Feature: Business Logic Service [GRANULARITY:标准]
+
 - [ ] 5. Create service interface in src/services/IFeatureService.ts
   - File: src/services/IFeatureService.ts
   - Define service contract with method signatures
@@ -100,57 +108,63 @@
   - _Leverage: tests/helpers/testUtils.ts, tests/mocks/modelMocks.ts_
   - _Requirements: 3.2, 3.3_
 
-- [ ] 4. Create API endpoints
+### Feature: API Layer [GRANULARITY:RELAXED]
+
+- [ ] 9. Create API endpoints
   - Design API structure
   - _Leverage: src/api/baseApi.ts, src/utils/apiUtils.ts_
   - _Requirements: 4.0_
 
-- [ ] 4.1 Set up routing and middleware
+- [ ] 10. Set up routing and middleware
   - Configure application routes
   - Add authentication middleware
   - Set up error handling middleware
   - _Leverage: src/middleware/auth.ts, src/middleware/errorHandler.ts_
   - _Requirements: 4.1_
 
-- [ ] 4.2 Implement CRUD endpoints
+- [ ] 11. Implement CRUD endpoints
   - Create API endpoints
   - Add request validation
   - Write API integration tests
   - _Leverage: src/controllers/BaseController.ts, src/utils/validation.ts_
   - _Requirements: 4.2, 4.3_
 
-- [ ] 5. Add frontend components
+### Feature: Frontend Components [GRANULARITY:宽松]
+
+- [ ] 12. Add frontend components
   - Plan component architecture
   - _Leverage: src/components/BaseComponent.tsx, src/styles/theme.ts_
   - _Requirements: 5.0_
 
-- [ ] 5.1 Create base UI components
+- [ ] 13. Create base UI components
   - Set up component structure
   - Implement reusable components
   - Add styling and theming
   - _Leverage: src/components/BaseComponent.tsx, src/styles/theme.ts_
   - _Requirements: 5.1_
 
-- [ ] 5.2 Implement feature-specific components
+- [ ] 14. Implement feature-specific components
   - Create feature components
   - Add state management
   - Connect to API endpoints
   - _Leverage: src/hooks/useApi.ts, src/components/BaseComponent.tsx_
   - _Requirements: 5.2, 5.3_
 
-- [ ] 6. Integration and testing
+### Feature: Integration & Finalization
+
+- [ ] 15. Integration and testing
   - Plan integration approach
   - _Leverage: src/utils/integrationUtils.ts, tests/helpers/testUtils.ts_
   - _Requirements: 6.0_
 
-- [ ] 6.1 Write end-to-end tests
+- [ ] 16. Write end-to-end tests
   - Set up E2E testing framework
   - Write user journey tests
   - Add test automation
   - _Leverage: tests/helpers/testUtils.ts, tests/fixtures/data.ts_
   - _Requirements: All_
 
-- [ ] 6.2 Final integration and cleanup
+- [ ] 17. Final integration and cleanup
   - Integrate all components
   - Fix any integration issues
   - Clean up code and documentation

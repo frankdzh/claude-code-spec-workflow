@@ -11,7 +11,14 @@ export interface TaskInfo {
   requirements?: string;
   completed: boolean;
   details?: string[];
+  granularity?: string;
 }
+
+const GRANULARITY_ALIASES: { [key: string]: string } = {
+  '严格': 'STRICT',
+  '标准': 'STANDARD',
+  '宽松': 'RELAXED',
+};
 
 /**
  * Parse tasks from a tasks.md markdown file, including both completed and pending tasks
@@ -22,6 +29,7 @@ export interface TaskInfo {
  *   - Details
  *   - _Requirements: 1.1, 2.2_
  *   - _Leverage: existing component X_
+ * - Supports [GRANULARITY:STRICT], [GRANULARITY:标准], etc.
  */
 export function parseAllTasksFromMarkdown(content: string): TaskInfo[] {
   const tasks: TaskInfo[] = [];
@@ -29,10 +37,19 @@ export function parseAllTasksFromMarkdown(content: string): TaskInfo[] {
   
   let currentTask: TaskInfo | null = null;
   let isCollectingTaskContent = false;
-  
+  let currentGranularity = 'STANDARD'; // Default granularity
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     const trimmedLine = line.trim();
+
+    // Match granularity for a whole section
+    const granularityMatch = trimmedLine.match(/ \[GRANULARITY:\s*([\w\u4e00-\u9fa5]+)\s*\]/i);
+    if (granularityMatch) {
+      const value = granularityMatch[1].trim();
+      currentGranularity = GRANULARITY_ALIASES[value] || value.toUpperCase();
+      continue; // Don't process this line as a task
+    }
     
     // Match task lines with flexible format for both pending and completed:
     // Supports: "- [ ] 1. Task", "- [x] 1. Task", "- [] 1 Task", etc.
@@ -55,7 +72,8 @@ export function parseAllTasksFromMarkdown(content: string): TaskInfo[] {
         id: taskId,
         description: taskDescription,
         completed: isCompleted,
-        details: []
+        details: [],
+        granularity: currentGranularity, // Assign the current section's granularity
       };
       isCollectingTaskContent = true;
     } 
