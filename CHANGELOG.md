@@ -5,6 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.5] - 2025-08-02
+
+### Fixed
+- Automated Task Completion: Updated all task completion instructions across agents and commands to use `get-tasks --mode complete` script instead of manual tasks.md editing for consistent cross-platform behavior
+
+## [1.5.4] - 2025-08-02
+
+### Fixed
+1. Fixed Regex Global Flag Issues: Added lastIndex = 0 resets to prevent state pollution between tests
+2. Updated Conditional Language Regex: Enhanced pattern matching for agent usage checks
+3. Standardized Get-Content Usage: Replaced all hardcoded file paths with proper cross-platform get-content script examples
+4. Fixed Unused Variable: Cleaned up lint error in src/update.ts
+5. Updated Parser Test Expectations: Aligned tests with new parser behavior that includes all requirement types
+
+## [1.5.3] - 2025-08-02
+
+### Added
+- Added a new agent spec-design-web-researcher.md that can be used to research current best practices and documentation for technologies that will be used in the design.
+
+## [1.5.2] - 2025-08-02
+
+### Fixed
+- The { isDefault: true } flag in Commander.js was too aggressive in matching - it would route ANY unmatched input to the default command, even when that input was actually meant to be a different command that Commander.js failed to parse correctly in certain environments.
+
+## [1.5.1] - 2025-08-02
+
+### Fixed
+- Removed the custom argument handling that was interfering with command routing
+
+## [1.5.0] - 2025-08-02
+
+### Fixed
+- Minor tweaks to sub agent calls especially around script command calls.
+- Tweaks to CLI which should fix issues in Linux, WSL and MacOS with calling npx @pimzino/claude-code-spec-workflow@latest using-agents or other commands.
+
 ## [1.4.9] - 2025-08-02
 
 ### Fixed

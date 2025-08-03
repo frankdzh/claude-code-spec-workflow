@@ -121,7 +121,14 @@ If this returns `true`, use the `spec-requirements-validator` agent to validate 
 Use the spec-requirements-validator agent to validate the requirements document for the {feature-name} specification.
 
 The agent should:
-1. Read the requirements document from .claude/specs/{feature-name}/requirements.md
+1. Read the requirements document using get-content script:
+   ```bash
+   # Windows:
+   npx @pimzino/claude-code-spec-workflow@latest get-content "C:\path\to\project\.claude\specs\{feature-name}\requirements.md"
+   
+   # macOS/Linux:
+   npx @pimzino/claude-code-spec-workflow@latest get-content "/path/to/project/.claude/specs/{feature-name}/requirements.md"
+   ```
 2. Validate against all quality criteria (structure, user stories, acceptance criteria, etc.)
 3. Check alignment with steering documents (product.md, tech.md, structure.md)
 4. Provide specific feedback and improvement suggestions
@@ -168,8 +175,26 @@ npx @pimzino/claude-code-spec-workflow@latest get-content "/path/to/project/.cla
    - **Verify against structure.md**: Ensure file organization follows project conventions
    - **Identify integration points**: Map how new feature connects to existing auth, database, APIs
 
-3. **Create Design Document**
+3. **Technology Research** (if agents enabled)
+   - Check if agents are enabled: `npx @pimzino/claude-code-spec-workflow@latest using-agents`
+   - If enabled, use the `spec-design-web-researcher` agent BEFORE creating the design:
+   
+   ```
+   Use the spec-design-web-researcher agent to research current best practices and documentation for technologies that will be used in the {feature-name} design.
+   
+   The agent should:
+   1. Analyze the requirements document to identify likely technologies
+   2. Search for latest documentation and best practices
+   3. Check for deprecated APIs or methods
+   4. Find security advisories or known issues
+   5. Provide recommendations for modern approaches
+   
+   Use the research findings to ensure the design uses current, secure approaches.
+   ```
+
+4. **Create Design Document**
    - Use the design template structure precisely
+   - **Incorporate research findings** from web researcher agent (if available)
    - **Build on existing patterns** rather than creating new ones
    - **Follow tech.md standards**: Ensure design adheres to documented technical guidelines
    - **Respect structure.md conventions**: Organize components according to project structure
@@ -198,7 +223,14 @@ If this returns `true`, use the `spec-design-validator` agent to validate the de
 Use the spec-design-validator agent to validate the design document for the {feature-name} specification.
 
 The agent should:
-1. Read the design document from .claude/specs/{feature-name}/design.md
+1. Read the design document using get-content script:
+   ```bash
+   # Windows:
+   npx @pimzino/claude-code-spec-workflow@latest get-content "C:\path\to\project\.claude\specs\{feature-name}\design.md"
+   
+   # macOS/Linux:
+   npx @pimzino/claude-code-spec-workflow@latest get-content "/path/to/project/.claude/specs/{feature-name}/design.md"
+   ```
 2. Read the requirements document for context
 3. Validate technical soundness, architecture quality, and completeness
 4. Check alignment with tech.md standards and structure.md conventions
@@ -287,7 +319,14 @@ If this returns `true`, use the `spec-task-validator` agent to validate the task
 Use the spec-task-validator agent to validate the task breakdown for the {feature-name} specification.
 
 The agent should:
-1. Read the tasks document from .claude/specs/{feature-name}/tasks.md
+1. Read the tasks document using get-content script:
+   ```bash
+   # Windows:
+   npx @pimzino/claude-code-spec-workflow@latest get-content "C:\path\to\project\.claude\specs\{feature-name}\tasks.md"
+   
+   # macOS/Linux:
+   npx @pimzino/claude-code-spec-workflow@latest get-content "/path/to/project/.claude/specs/{feature-name}/tasks.md"
+   ```
 2. Read requirements.md and design.md for context
 3. Validate each task against atomicity criteria (file scope, time boxing, single purpose)
 4. Check for agent-friendly formatting and clear specifications
@@ -318,7 +357,14 @@ If this returns `true` and validation passes, use the `spec-dependency-analyzer`
 Use the spec-dependency-analyzer agent to analyze task dependencies for the {feature-name} specification.
 
 The agent should:
-1. Read the tasks document from .claude/specs/{feature-name}/tasks.md
+1. Read the tasks document using get-content script:
+   ```bash
+   # Windows:
+   npx @pimzino/claude-code-spec-workflow@latest get-content "C:\path\to\project\.claude\specs\{feature-name}\tasks.md"
+   
+   # macOS/Linux:
+   npx @pimzino/claude-code-spec-workflow@latest get-content "/path/to/project/.claude/specs/{feature-name}/tasks.md"
+   ```
 2. Analyze explicit and implicit dependencies between tasks
 3. Identify parallelization opportunities
 4. Calculate the critical path
@@ -352,9 +398,23 @@ The analysis will help optimize task execution strategy.
 - Continue revision cycle until explicit approval is received
 
 ### Template Usage
-- **Requirements**: Must follow `.claude/templates/requirements-template.md` structure exactly
-- **Design**: Must follow `.claude/templates/design-template.md` structure exactly  
-- **Tasks**: Must follow `.claude/templates/tasks-template.md` structure exactly
+Load and follow template structures using get-content script:
+
+```bash
+# Windows:
+npx @pimzino/claude-code-spec-workflow@latest get-content "C:\path\to\project\.claude\templates\requirements-template.md"
+npx @pimzino/claude-code-spec-workflow@latest get-content "C:\path\to\project\.claude\templates\design-template.md"
+npx @pimzino/claude-code-spec-workflow@latest get-content "C:\path\to\project\.claude\templates\tasks-template.md"
+
+# macOS/Linux:
+npx @pimzino/claude-code-spec-workflow@latest get-content "/path/to/project/.claude/templates/requirements-template.md"
+npx @pimzino/claude-code-spec-workflow@latest get-content "/path/to/project/.claude/templates/design-template.md"
+npx @pimzino/claude-code-spec-workflow@latest get-content "/path/to/project/.claude/templates/tasks-template.md"
+```
+
+- **Requirements**: Must follow requirements template structure exactly
+- **Design**: Must follow design template structure exactly  
+- **Tasks**: Must follow tasks template structure exactly
 - **Include all template sections** - do not omit any required sections
 
 ### Task Command Generation

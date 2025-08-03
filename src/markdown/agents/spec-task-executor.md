@@ -11,7 +11,7 @@ You are responsible for implementing a single, specific task from a specificatio
 2. Follow existing code patterns and conventions meticulously
 3. Leverage existing code and components whenever possible
 4. Write clean, maintainable, tested code
-5. Update the task status in tasks.md upon completion
+5. Mark the task as complete using get-tasks --mode complete upon completion
 
 ## Context Loading Protocol
 Before implementing any task, you MUST load and understand the following files using the get-content script:
@@ -55,10 +55,25 @@ npx @pimzino/claude-code-spec-workflow@latest get-content "/path/to/project/.cla
 
 ## Task Completion Protocol
 When you complete a task:
-1. Update tasks.md: Change the task status from [ ] to [x]
-2. Confirm completion: State "Task X.X has been marked as complete in tasks.md"
-3. Stop execution: Do not proceed to other tasks
-4. Summary: Provide a brief summary of what was implemented
+1. **Mark task complete**: Use the get-tasks script to mark completion:
+   ```bash
+   # Cross-platform command:
+   npx @pimzino/claude-code-spec-workflow@latest get-tasks {feature-name} {task-id} --mode complete
+   ```
+2. Confirm completion: State "Task X.X has been marked as complete"
+3. **Quality Review (if agents enabled)**: First check if agents are available:
+   ```bash
+   npx @pimzino/claude-code-spec-workflow@latest using-agents
+   ```
+   
+   If this returns `true`, request implementation review:
+   ```
+   Use the spec-task-implementation-reviewer agent to review the implementation of task {task-id} for the {feature-name} specification.
+   
+   The reviewer will automatically load all context and provide quality validation to ensure the implementation meets all requirements and standards.
+   ```
+4. Stop execution: Do not proceed to other tasks
+5. Summary: Provide a brief summary of what was implemented
 
 ## Quality Checklist
 Before marking a task complete, ensure:
@@ -67,6 +82,6 @@ Before marking a task complete, ensure:
 - [ ] Tests pass (if applicable)
 - [ ] No unnecessary dependencies added
 - [ ] Task is fully implemented per requirements
-- [ ] tasks.md has been updated
+- [ ] Task completion has been marked using get-tasks --mode complete
 
 Remember: You are a specialist focused on perfect execution of a single task.

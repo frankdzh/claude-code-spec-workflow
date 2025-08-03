@@ -26,12 +26,34 @@ try {
 
 const program = new Command();
 
+// Debug logging for WSL issues
+if (process.env.DEBUG_CLI) {
+  console.log('process.argv:', process.argv);
+  console.log('process.execPath:', process.execPath);
+  console.log('__filename:', __filename);
+}
+
 program
   .name('claude-spec-setup')
   .description('Set up Claude Code Spec Workflow with automated orchestration in your project')
-  .version(packageJson.version);
+  .version(packageJson.version)
+  .addHelpText('after', `
+Examples:
+  npx @pimzino/claude-code-spec-workflow@latest           # Run setup (default)
+  npx @pimzino/claude-code-spec-workflow@latest setup     # Run setup explicitly
+  npx @pimzino/claude-code-spec-workflow@latest test      # Test setup in temp directory
+  npx @pimzino/claude-code-spec-workflow@latest get-content <file>  # Read file content
+  npx @pimzino/claude-code-spec-workflow@latest using-agents       # Check if agents enabled
+  npx @pimzino/claude-code-spec-workflow@latest get-tasks <spec>   # Get tasks from spec
 
+For help with a specific command:
+  npx @pimzino/claude-code-spec-workflow@latest <command> --help
+`);
+
+// Setup command
 program
+  .command('setup')
+  .description('Set up Claude Code Spec Workflow in your project')
   .option('-p, --project <path>', 'Project directory', process.cwd())
   .option('-f, --force', 'Force overwrite existing files')
   .option('-y, --yes', 'Skip confirmation prompts')
@@ -275,7 +297,8 @@ program
       await setup.runSetup();
 
       console.log(chalk.green('Test completed successfully!'));
-      console.log(chalk.gray(`Test directory: ${tempDir}`));
+      console.log(chalk.gray(`Test directory: ${path.resolve(tempDir)}`));
+      console.log(chalk.blue('You can inspect the generated files in the test directory.'));
 
     } catch (error) {
       console.error(chalk.red('Test failed:'), error);
@@ -401,4 +424,31 @@ program
     await getTasks(specName, taskId, mode, options.project);
   });
 
+// Add error handling for unknown commands
+program.on('command:*', () => {
+  const availableCommands = program.commands.map(cmd => cmd.name()).filter(name => name !== 'help');
+  console.error(chalk.red(`Error: Unknown command '${program.args[0]}'`));
+  console.log();
+  console.log(chalk.cyan('Available commands:'));
+  availableCommands.forEach(cmd => {
+    const command = program.commands.find(c => c.name() === cmd);
+    if (command) {
+      console.log(chalk.gray(`  ${cmd} - ${command.description()}`));
+    }
+  });
+  console.log();
+  console.log(chalk.yellow('For help with a specific command, run:'));
+  console.log(chalk.gray('  npx @pimzino/claude-code-spec-workflow@latest <command> --help'));
+  process.exit(1);
+});
+
+// Check if we should add 'setup' as default command
+const args = process.argv.slice(2);
+if (args.length === 0 || (args.length > 0 && !args[0].startsWith('-') && !program.commands.some(cmd => cmd.name() === args[0]))) {
+  // No command provided or first arg is not a known command and not a flag
+  // Insert 'setup' as the command
+  process.argv.splice(2, 0, 'setup');
+}
+
+// Parse arguments normally - let Commander.js handle everything
 program.parse();

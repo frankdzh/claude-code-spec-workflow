@@ -64,16 +64,47 @@ Task: {task-id} - {description}
 Requirements: {requirements-ref}
 Leverage: {leverage-info}
 
-Mark complete in tasks.md when done.
+Mark complete using get-tasks --mode complete when done.
 ```
 
 **Step 3 - Fallback (if agent unavailable):**
 `/{spec-name}-task-{task-id}`
 
-**Step 4 - Report completion:**
-`✅ Task {id} complete`
+**Step 4 - Implementation Review (if agents enabled):**
+First check if agents are available:
+```bash
+npx @pimzino/claude-code-spec-workflow@latest using-agents
+```
 
-**Step 5 - Mark task complete and continue:**
+If this returns `true`, use the implementation reviewer:
+```
+Use the spec-task-implementation-reviewer agent to review the implementation of task {task-id} for {spec-name}.
+
+Context files are automatically loaded by the reviewer using get-content scripts:
+
+```bash
+# Windows:
+npx @pimzino/claude-code-spec-workflow@latest get-content "C:\path\to\project\.claude\specs\{spec-name}\requirements.md"
+npx @pimzino/claude-code-spec-workflow@latest get-content "C:\path\to\project\.claude\specs\{spec-name}\design.md"
+npx @pimzino/claude-code-spec-workflow@latest get-content "C:\path\to\project\.claude\specs\{spec-name}\tasks.md"
+
+# macOS/Linux:
+npx @pimzino/claude-code-spec-workflow@latest get-content "/path/to/project/.claude/specs/{spec-name}/requirements.md"
+npx @pimzino/claude-code-spec-workflow@latest get-content "/path/to/project/.claude/specs/{spec-name}/design.md"
+npx @pimzino/claude-code-spec-workflow@latest get-content "/path/to/project/.claude/specs/{spec-name}/tasks.md"
+```
+
+Additional context:
+- .claude/steering/ documents (if available)
+- Implementation changes for task {task-id}
+
+The reviewer provides quality validation before proceeding to the next task.
+```
+
+**Step 5 - Report completion:**
+`✅ Task {id} complete and reviewed`
+
+**Step 6 - Mark task complete and continue:**
 ```bash
 # Mark current task as complete
 npx @pimzino/claude-code-spec-workflow@latest get-tasks {spec-name} {task-id} --mode complete
@@ -118,7 +149,7 @@ The orchestrator runs in **fully automated mode** by default. If you need manual
 - **Delegate everything** - never implement code yourself
 - **Minimal output** - focus on coordination not verbose reporting
 - **Auto-resume** - seamlessly continue from any interruption point
-- **Update state** - ensure each completed task is marked [x] in tasks.md
+- **Update state** - ensure each completed task is marked using get-tasks --mode complete
 
 ## Agent Dependencies
 1. **spec-task-executor** (primary) - implements individual tasks
